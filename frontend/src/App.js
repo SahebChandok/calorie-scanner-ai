@@ -5,6 +5,7 @@ function CameraUpload() {
   const canvasRef = useRef(null);
   const [imageCaptured, setImageCaptured] = useState(null);
   const [response, setResponse] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // <-- added
 
   const startCamera = async () => {
     try {
@@ -36,26 +37,31 @@ function CameraUpload() {
       setImageCaptured(blob);
     }, "image/jpeg");
 
-    stopCamera(); // Stop the camera immediately after capturing
+    stopCamera();
   };
 
   const uploadPhoto = async () => {
     if (!imageCaptured) return;
 
+    setIsLoading(true); // <-- start loading
+    setResponse("");     // clear previous response
+
     const formData = new FormData();
     formData.append("image", imageCaptured, "photo.jpg");
 
     try {
-      const res = await fetch("http://localhost:8080/api/scan", {
+      const res = await fetch("http://ec2-3-144-132-61.us-east-2.compute.amazonaws.com:8080/api/scan", {
         method: "POST",
         body: formData,
       });
 
-      const data = await res.text(); // or res.json()
+      const data = await res.text();
       setResponse(data);
     } catch (err) {
       console.error("Upload failed:", err);
       setResponse("Error uploading image.");
+    } finally {
+      setIsLoading(false); // <-- stop loading
     }
   };
 
@@ -83,23 +89,31 @@ function CameraUpload() {
         <button
           onClick={uploadPhoto}
           className="bg-blue-600 text-white px-4 py-2 rounded"
+          disabled={isLoading}
         >
-          Upload
+          {isLoading ? "Uploading..." : "Upload"}
         </button>
       </div>
+
+      {isLoading && (
+        <div className="flex items-center gap-2 mt-4">
+          <div className="w-6 h-6 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+          <span className="text-blue-500 font-medium">Uploading image...</span>
+        </div>
+      )}
 
       {imageCaptured && (
         <div className="bg-white p-4 rounded shadow max-w-md mt-4">
           <h2 className="font-semibold">Preview:</h2>
           <img
-  src={URL.createObjectURL(imageCaptured)}
-  alt="Captured"
-  className="w-64 h-auto rounded shadow mt-2"
-/>
+            src={URL.createObjectURL(imageCaptured)}
+            alt="Captured"
+            className="w-64 h-auto rounded shadow mt-2"
+          />
         </div>
       )}
 
-      {response && (
+      {response && !isLoading && (
         <div className="bg-white p-4 rounded shadow max-w-md mt-4">
           <h2 className="font-semibold">AI Response:</h2>
           <p className="whitespace-pre-wrap">{response}</p>
