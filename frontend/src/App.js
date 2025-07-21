@@ -50,7 +50,7 @@ function CameraUpload() {
     formData.append("image", imageCaptured, "photo.jpg");
 
     try {
-      const res = await fetch("http://ec2-3-144-132-61.us-east-2.compute.amazonaws.com:8080/api/scan", {
+      const res = await fetch("/api/scan", {
         method: "POST",
         body: formData,
       });

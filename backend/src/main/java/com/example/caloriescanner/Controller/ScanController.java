@@ -13,7 +13,11 @@ import org.springframework.http.MediaType;
 import java.io.IOException;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+        "http://localhost:3000",
+        "https://calorie-scanner-kappa.vercel.app"
+})
+
 @RequestMapping("/api/scan")
 public class ScanController {
     private OpenAIService openaiservice;
