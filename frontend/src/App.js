@@ -5,11 +5,14 @@ function CameraUpload() {
   const canvasRef = useRef(null);
   const [imageCaptured, setImageCaptured] = useState(null);
   const [response, setResponse] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // <-- added
+  const [isLoading, setIsLoading] = useState(false);
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      // Request back camera if available on mobile devices
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: { ideal: "environment" } },
+      });
       videoRef.current.srcObject = stream;
     } catch (err) {
       console.error("Camera access denied:", err);
@@ -43,8 +46,8 @@ function CameraUpload() {
   const uploadPhoto = async () => {
     if (!imageCaptured) return;
 
-    setIsLoading(true); // <-- start loading
-    setResponse("");     // clear previous response
+    setIsLoading(true);
+    setResponse("");
 
     const formData = new FormData();
     formData.append("image", imageCaptured, "photo.jpg");
@@ -61,7 +64,7 @@ function CameraUpload() {
       console.error("Upload failed:", err);
       setResponse("Error uploading image.");
     } finally {
-      setIsLoading(false); // <-- stop loading
+      setIsLoading(false);
     }
   };
 
@@ -69,7 +72,12 @@ function CameraUpload() {
     <div className="flex flex-col items-center gap-4 p-6">
       <h1 className="text-xl font-bold">📸 Scan Food with Camera</h1>
 
-      <video ref={videoRef} autoPlay className="w-64 h-auto rounded shadow" />
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        className="w-64 h-auto rounded shadow"
+      />
 
       <canvas ref={canvasRef} style={{ display: "none" }} />
 
