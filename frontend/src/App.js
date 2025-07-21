@@ -70,7 +70,7 @@ function CameraUpload() {
 
   return (
     <div className="flex flex-col items-center gap-4 p-6">
-      <h1 className="text-xl font-bold">📸 Scan Nutrition Label with Camera</h1>
+      <h1 className="text-xl font-bold">📸 Scan Nutrition Label</h1>
 
       <video
         ref={videoRef}
