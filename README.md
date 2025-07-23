@@ -1,1 +1,2 @@
 # calorie-scanner-ai
+This project allows users to scan nutrient labels on snack foods and receive tailored recommendations based on their goals to gain, maintain, or reduce weight. It leverages OpenAI APIs to analyze nutrition information intelligently. The backend is developed using Spring Boot and hosted on AWS EC2. Uploaded images are securely stored in AWS S3, with their accessible URLs saved in MongoDB for tracking. The frontend supports live camera capture and seamless image upload for instant feedback.
